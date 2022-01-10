@@ -8,16 +8,16 @@ class Manager extends Employee {
      * @param {string} email 
      * @param {string} officeNumber 
      */
-    constructor (name, id, email, officeNumber){
-        super(name, id, email);
+    constructor (name, id, email, officeNumber) {
+        super (name, id, email);
         this.officeNumber = officeNumber;
     }
-    getOffice(){
+    getOffice() {
         return this.officeNumber;
     }
-    getRole(){
+    getRole() {
         return 'Manager';
     }
-}
+};
 
 module.exports = Manager;

@@ -12,74 +12,45 @@ const Questions = require('./library/Questions');
 
 const members = [];
 
-let manager;
-
-const init = () => {
-    start();
-};
 
 const start = () => {
-    inquirer.prompt(Questions.manQuest).then((answer) => {
-        if(answer.choose === 'Create a profile.'){
-            choose();
-        } 
-        else if(answer.choose === 'View my team.'){
-            console.log(members);
-        }
-        else {
-            console.log('Error!');
-        }
-    })
-};
-
-const choose = () => {
-    inquirer.prompt(Questions.empQuest).then((answer) => {
-        console.log(answer);
-        role(answer.add);
-    });
+    role();
 };
 
 const role = () => {
-    inquirer.prompt(Questions.empQuest).then(answer => {
+    inquirer.prompt(Questions).then(answer => {
+        let member;
         if (answer.role === 'Intern'){
-            members.push(new Intern(answer.name, answer.id, answer.email, answer.school));
+            member = new Intern(answer.name, answer.id, answer.email, answer.school);
         } else if (answer.role === 'Engineer'){
-            members.push(new Engineer(answer.name, answer.id, answer.email, answer.gitHub));
+            member = new Engineer(answer.name, answer.id, answer.email, answer.gitHub);
         } else if (answer.role === 'Manager'){
-            manager = new Manager(answer.name, answer.id, answer.email, answer.office);
-        } if (answer.loop === true){
+            member = new Manager(answer.name, answer.id, answer.email, answer.office);
+        } 
+        members.push(member);
+        if (answer.choose === 'Create a profile.'){
             role();
-
-        } else {
-
-            const mainHtml = fs.readFileSync('./templates/main.html', 'utf8');
-
-            const managerHtml = fs.readFileSync('./templates/manager.html', 'utf8');
-
+        } 
+        else if (answer.choose === 'View my team.'){
+            console.log(members);
+            let mainHtml = fs.readFileSync('./templates/main.html', 'utf8');
+            card = '';
             
-            managerHtml = managerHtml.replaceAll('{{ name }}', manager.getName());
-            managerHtml = managerHtml.replaceAll('{{ role }}', manager.getRole());
-            managerHtml = managerHtml.replaceAll('{{ id }}', manager.getId());
-            managerHtml = managerHtml.replaceAll('{{ email }}', manager.getEmail());
-            managerHtml = managerHtml.replaceAll('{{ officeNumber }}', manager.getOffice());
-
-            let card = managerHtml;
-
             for (let i = 0; i < members.length; i++){
                 let employee = members[i];
                 card += generateHtml(employee);
-            }
-            
+            };
+                
             mainHtml = mainHtml.replaceAll('{{ team }}', card);
-
-            fs.writeFileSync('index.html', main); 
+    
+            fs.writeFileSync('./output/team.html', mainHtml); 
         }
-    })
+    });        
 };
 
 generateHtml = (employee) => {
  if (employee.getRole() === 'Engineer'){
-    const engineerHtml = fs.readFileSync('./templates/engineer.html', 'utf8');
+    let engineerHtml = fs.readFileSync('./templates/engineer.html', 'utf8');
     engineerHtml = engineerHtml.replaceAll('{{ name }}', employee.getName());
     engineerHtml = engineerHtml.replaceAll('{{ role }}', employee.getRole());
     engineerHtml = engineerHtml.replaceAll('{{ id }}', employee.getId());
@@ -87,14 +58,22 @@ generateHtml = (employee) => {
     engineerHtml = engineerHtml.replaceAll('{{ github }}', employee.getGithub());
     return engineerHtml;
     } else if (employee.getRole() === 'Intern') {
-    const internHtml = fs.readFileSync('./templates/intern.html', 'utf8');
+    let internHtml = fs.readFileSync('./templates/intern.html', 'utf8');
     internHtml = internHtml.replaceAll('{{ name }}', employee.getName());
     internHtml = internHtml.replaceAll('{{ role }}', employee.getRole());
     internHtml = internHtml.replaceAll('{{ id }}', employee.getId());
     internHtml = internHtml.replaceAll('{{ email }}', employee.getEmail());
     internHtml = internHtml.replaceAll('{{ school }}', employee.getSchool());
     return internHtml;
+    } else if (employee.getRole() === 'Manager'){
+    let managerHtml = fs.readFileSync('./templates/manager.html', 'utf8');
+    managerHtml = managerHtml.replaceAll('{{ name }}', employee.getName());
+    managerHtml = managerHtml.replaceAll('{{ role }}', employee.getRole());
+    managerHtml = managerHtml.replaceAll('{{ id }}', employee.getId());
+    managerHtml = managerHtml.replaceAll('{{ email }}', employee.getEmail());
+    managerHtml = managerHtml.replaceAll('{{ officeNumber }}', employee.getOffice());
+    return managerHtml;
     };
 };
 
-init();
+start();

@@ -1,4 +1,4 @@
-const empQuest = [
+const Questions = [
     {
         type: 'list',
         name: 'role',
@@ -95,25 +95,19 @@ const empQuest = [
         }
     },
     {
-        type: "confirm",
-        name: "loop",
-        message: "Would you like to add another team member?"
+        type: 'list',
+        name: 'choose',
+        message: 'What would you like to do?',
+        choices: ["Create a profile.", "View my team."],
+        validate: inputChoice => {
+            if (inputChoice) {
+                return true;
+            } else {
+                console.log('Error! Please choose from one of the available options.');
+                return false;
+            }
+        }
     }
 ];
 
-const manQuest = {
-    type: 'list',
-    name: 'choose',
-    message: 'What would you like to do?',
-    choices: ["Create a profile.", "View my team."],
-    validate: inputChoice => {
-        if (inputChoice) {
-            return true;
-        } else {
-            console.log('Error! Please choose from one of the available options.');
-            return false;
-        }
-    }
-};
-
-module.exports = {empQuest, manQuest}; 
+module.exports = Questions; 
